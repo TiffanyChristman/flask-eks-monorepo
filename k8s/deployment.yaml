@@ -15,7 +15,9 @@ spec:
     spec:
       containers:
         - name: flask-app
-          image: ghcr.io/TiffanyChristman/flask-eks-monorepo:dev
+          image: ghcr.io/tiffanychrisman/flask-eks-monorepo:dev
+          imagePullPolicy: Always   # helps when you re-push the same tag
+
           ports:
             - containerPort: 5000
           readinessProbe:

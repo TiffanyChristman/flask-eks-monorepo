@@ -1,4 +1,4 @@
-OWNER?=TiffanyChristman
+OWNER?=tiffanychristman
 REPO?=flask-eks-monorepo
 IMAGE=ghcr.io/$(OWNER)/$(REPO)
 TAG?=dev
