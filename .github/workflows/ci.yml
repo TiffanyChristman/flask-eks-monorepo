@@ -2,8 +2,10 @@ name: ci
 
 on:
   push:
-    branches: [ "main" ]
-    tags: [ "v*" ]
+    branches:
+      - main
+    tags:
+      - "v*"
   workflow_dispatch:
 
 permissions:
@@ -13,6 +15,7 @@ permissions:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    shell: bash
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,7 +23,9 @@ jobs:
       - name: Set IMAGE (lowercase)
         run: |
           IMAGE="ghcr.io/${{ github.repository }}"
-          echo "IMAGE=$(echo "$IMAGE" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+          # force to lowercase (safe for Docker/ghcr)
+          IMAGE_LC="$(echo "$IMAGE" | tr '[:upper:]' '[:lower:]')"
+          echo "IMAGE=$IMAGE_LC" >> "$GITHUB_ENV"
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -30,10 +35,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build image
-        run: docker build -t "$IMAGE:dev" .
+        run: |
+          docker build -t "$IMAGE:dev" .
 
       - name: Push image
-        run: docker push "$IMAGE:dev"
+        run: |
+          docker push "$IMAGE:dev"
 
       - name: Output image ref
-        run: echo "Image: $IMAGE:dev"
+        run: |
+          echo "Image: $IMAGE:dev"
